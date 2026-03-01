@@ -16,15 +16,22 @@ dependencies = [
     "psycopg2-binary>=2.9.11",
     "python-dotenv>=1.2.1",
     "redis>=7.2.1",
+    "requests>=2.32.5",
 ]
 
 [dependency-groups]
 dev = [
     "ruff>=0.15.4",
 ]
+weather = [
+    "pydantic>=2.12.5",
+    "grpcio>=1.78.0",
+    "grpcio-tools>=1.78.0",
+    "httpx>=0.28.1",
+]
 
 [tool.ruff]
-exclude = [".venv", "manage.py"]
+exclude = [".venv", "manage.py", "grpc_config"]
 line-length = 79
 
 [tool.ruff.lint]

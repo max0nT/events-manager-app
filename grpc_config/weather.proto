@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+
+message WeatherRequest {
+    float latitude = 1;
+    float longitude = 2;
+    string start_date = 3;
+}
+
+message WeatherResponse {
+    float temperature = 1;
+    float pressure = 2;
+    float windSpeed = 3;
+    string windDirection = 4;
+    float humidity = 5;
+}
+
+
+service WeatherService {
+    rpc GetWeatherData(WeatherRequest) returns (WeatherResponse) {}
+}
