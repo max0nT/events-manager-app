@@ -1,0 +1,124 @@
+x-app: &app-base
+  build:
+    context: .
+    dockerfile: Dockerfile
+  entrypoint: python manage.py
+  env_file: .env
+  networks:
+    - doc-net  # Добавляем сеть для всех сервисов
+
+x-celery: &celery-base
+  build:
+    context: .
+    dockerfile: Dockerfile
+  entrypoint: python -m celery -A core.celery:app
+  env_file: .env
+  networks:
+    - doc-net  # Добавляем сеть для всех сервисов
+
+services:
+  dozzle:
+    image: amir20/dozzle:latest
+    volumes:
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+      - dozzle-logs-archive:/archive
+    environment:
+      - DOZZLE_ARCHIVE_DIR=/archive
+      - DOZZLE_NO_ANALYTICS=true
+    restart: unless-stopped
+    ports:
+     - "8080:8080"
+    deploy:
+      resources:
+        limits:
+          memory: 100M
+    networks:
+      - doc-net  # Добавляем сеть
+
+  migrate:
+    <<: *app-base
+    command: migrate
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  web:
+    <<: *app-base
+    command: runserver
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+      postgres:
+        condition: service_healthy
+    ports:
+      - "8000:8000"
+
+  celery:
+    <<: *celery-base
+    command: worker --loglevel=INFO
+
+  celery-beat:
+    <<: *celery-base
+    command: beat --loglevel=INFO --scheduler django_celery_beat.schedulers:DatabaseScheduler
+
+  postgres:
+    image: postgres:16
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+      PGTZ: UTC
+      TZ: UTC
+      POSTGRES_HOST_AUTH_METHOD: md5
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      doc-net:
+        aliases:
+          - postgres
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  mailpit:
+    image: axllent/mailpit
+    restart: always
+    volumes:
+      - mailpit-box:/data
+    ports:
+      - 8025:8025
+      - 1025:1025
+    environment:
+      MP_MAX_MESSAGES: 5000
+      MP_DATABASE: /data/mailpit.db
+      MP_SMTP_AUTH_ACCEPT_ANY: 1
+      MP_SMTP_AUTH_ALLOW_INSECURE: 1
+    networks:
+      doc-net:
+        aliases:
+          - mailpit
+
+  redis:
+    image: redis:latest
+    restart: unless-stopped
+    ports:
+     - "6379:6379"
+    networks:
+      doc-net:
+        aliases:
+          - redis
+
+networks:
+  doc-net:
+    driver: bridge
+
+volumes:
+  pgdata:
+  mailpit-box:
+  dozzle-logs-archive:

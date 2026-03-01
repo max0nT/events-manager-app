@@ -1,0 +1,31 @@
+name: Pre-commit Checks
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  pre-commit:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install prek
+        uses: j178/prek-action@v1
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          version: "latest"
+          python-version: "3.14"
+          enable-cache: true
+
+      - name: Install dev dependencies from pyproject.toml
+        run: |
+          uv sync --only-group dev
+
+      - name: Run pre-commit hooks
+        run: prek run -a
