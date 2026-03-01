@@ -1,8 +1,6 @@
 FROM python:3.14-slim AS builder
 
 WORKDIR /app
-COPY ./core /app/
-COPY ./manage.py /app/
 
 RUN apt-get update && \
     apt-get install -y git && \
@@ -20,10 +18,16 @@ FROM python:3.14-slim
 
 WORKDIR /app
 
+RUN apt-get update && \
+    apt-get install -y gdal-bin libgdal-dev binutils libproj-dev && \
+    rm -rf /var/lib/apt/lists/*
+
+
 COPY --from=builder /app/.venv /app/.venv
 
 COPY ./core /app/core
 COPY ./manage.py /app/
+COPY ./events /app/events
 
 ENV PATH="/app/.venv/bin:$PATH"
 ENV PYTHONUNBUFFERED=1

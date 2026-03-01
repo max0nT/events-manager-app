@@ -5,7 +5,7 @@ x-app: &app-base
   entrypoint: python manage.py
   env_file: .env
   networks:
-    - doc-net  # Добавляем сеть для всех сервисов
+    - doc-net
 
 x-celery: &celery-base
   build:
@@ -14,7 +14,7 @@ x-celery: &celery-base
   entrypoint: python -m celery -A core.celery:app
   env_file: .env
   networks:
-    - doc-net  # Добавляем сеть для всех сервисов
+    - doc-net
 
 services:
   dozzle:
@@ -34,7 +34,7 @@ services:
         limits:
           memory: 100M
     networks:
-      - doc-net  # Добавляем сеть
+      - doc-net
 
   migrate:
     <<: *app-base
@@ -45,7 +45,7 @@ services:
 
   web:
     <<: *app-base
-    command: runserver
+    command: runserver 0.0.0.0:8000
     depends_on:
       migrate:
         condition: service_completed_successfully

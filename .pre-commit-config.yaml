@@ -8,7 +8,7 @@ repos:
     # Run the formatter.
     - id: ruff-format
 - repo: https://github.com/pre-commit/pre-commit-hooks
-  rev: v5.0.0  # Используйте актуальную версию
+  rev: v5.0.0
   hooks:
     - id: trailing-whitespace
     - id: end-of-file-fixer
@@ -18,3 +18,11 @@ repos:
     - id: mixed-line-ending
       args: ['--fix=lf']
     - id: detect-private-key
+- repo: local
+  hooks:
+    - id: validate-swagger-schema
+      name: Validate OpenApi schema
+      entry: python manage.py spectacular --validate --fail-on-warn
+      language: system
+      args: []
+      pass_filenames: false
