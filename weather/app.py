@@ -41,7 +41,7 @@ def serve() -> None:
     weather_pb2_grpc.add_WeatherServiceServicer_to_server(
         MyWeatherService(), server
     )
-    server.add_insecure_port("0.0.0.0:50051")
+    server.add_insecure_port("weather:50051")
 
     print("Server is running now")
     server.start()
