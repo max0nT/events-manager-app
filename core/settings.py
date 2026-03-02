@@ -32,7 +32,7 @@ SECRET_KEY = (
 )
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = getenv("DEBUG") == "True"
+DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 
@@ -52,6 +52,8 @@ INSTALLED_APPS = [
     "constance",
     "django_celery_beat",
     "drf_spectacular",
+    "import_export",
+    "import_export_extensions",
     # First party app
     "events",
 ]

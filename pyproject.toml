@@ -19,6 +19,8 @@ dependencies = [
     "python-dotenv>=1.2.1",
     "redis>=7.2.1",
     "requests>=2.32.5",
+    "django-import-export>=4.4.0",
+    "django-import-export-extensions>=0.4.1",
 ]
 
 [dependency-groups]
