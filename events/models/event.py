@@ -1,11 +1,23 @@
 from io import BytesIO
 
+import django_pydantic_field
+import pydantic
 from django.contrib.auth import get_user_model
 from django.core.files.base import ContentFile
 from django.db import models
 from PIL import Image
 
 User = get_user_model()
+
+
+class WeatherData(pydantic.BaseModel):
+    """Pydantic model to describe weather data for event."""
+
+    temperature: float
+    humidity: int
+    pressure_hpa: float
+    wind_speed: float
+    wind_direction: str
 
 
 class Event(models.Model):
@@ -31,6 +43,11 @@ class Event(models.Model):
     status = models.CharField(max_length=20, choices=Status.choices)
 
     preview_image = models.ImageField(upload_to="previews/")
+
+    weather_data = django_pydantic_field.SchemaField(
+        schema=WeatherData,
+        null=True,
+    )
 
     def save(self, *args, **kwargs) -> None:
         """Save with resize preview image."""

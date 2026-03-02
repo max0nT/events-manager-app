@@ -28,6 +28,7 @@ COPY --from=builder /app/.venv /app/.venv
 COPY ./core /app/core
 COPY ./manage.py /app/
 COPY ./events /app/events
+COPY ./weather_sync /app/weather_sync
 
 ENV PATH="/app/.venv/bin:$PATH"
 ENV PYTHONUNBUFFERED=1

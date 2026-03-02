@@ -5,11 +5,13 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [
+    "pydantic>=2.12.5",
     "celery>=5.6.2",
     "django>=6.0.2",
     "django-celery-beat>=2.9.0",
     "django-constance>=4.3.4",
     "django-filter>=25.2",
+    "django-pydantic-field>=0.5.4",
     "djangorestframework>=3.16.1",
     "drf-spectacular>=0.29.0",
     "pillow>=12.1.1",
@@ -24,7 +26,6 @@ dev = [
     "ruff>=0.15.4",
 ]
 weather = [
-    "pydantic>=2.12.5",
     "grpcio>=1.78.0",
     "grpcio-tools>=1.78.0",
     "httpx>=0.28.1",
