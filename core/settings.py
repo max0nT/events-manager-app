@@ -159,8 +159,10 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = getenv("EMAIL_HOST")
 EMAIL_PORT = getenv("EMAIL_PORT")
+DEFAULT_FROM_EMAIL = "noreply@eventapp.com"
 EMAIL_USE_SSL = False
 
 # Rest framework
